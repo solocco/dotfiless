@@ -1,0 +1,16 @@
+#!/bin/bash
+
+while true; do
+    internet=$($HOME/suckless/dwm/status/dwmstatus-internet)
+    bt=$($HOME/suckless/dwm/status/dwmstatus-bt)
+    cputemp=$($HOME/suckless/dwm/status/dwmstatus-cputemp)
+    memory=$($HOME/suckless/dwm/status/dwmstatus-memory)
+    brightness=$($HOME/suckless/dwm/status/dwmstatus-brightness)
+    volume=$($HOME/suckless/dwm/status/dwmstatus-volume)
+    datetime=$($HOME/suckless/dwm/status/dwmstatus-datetime)
+    user=$($HOME/suckless/dwm/status/dwmstatus-user)
+    sep=$($HOME/suckless/dwm/status/dwmstatus-sep)
+
+    xsetroot -name " $bt $internet $cputemp $memory $brightness $volume $datetime $user "
+    sleep 1
+done
