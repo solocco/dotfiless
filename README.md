@@ -6,13 +6,18 @@ Konfigurasi otomatis untuk Void Linux + DWM menggunakan skrip shell. Dirancang a
 
 ## 🛠️ Fitur Utama
 
-* ✅ Void Linux Base Setup
-* ✅ dwm, st, dmenu (build dari suckless)
-* ✅ Konfigurasi dotfiles otomatis
-* ✅ NetworkManager, bluetooth, pipewire, polkit
-* ✅ Rofi, picom, dunst, ZSH + Oh-My-Zsh
-* ✅ Setup font, tema (Gruvbox), dan tools penting lainnya
-* ✅ Shell interaktif & prompt reboot
+| Komponen       | Detail                      |
+|----------------|-----------------------------|
+| Linux          | Void Linux (glibc)          |
+| WM             | DWM                         |
+| Terminal       | St                          |
+| App Launcher   | Dmenu                       |
+| Font           | Jetbrains Mono Nerd Fonts   |
+| Theme          | Gruvbox Dark                |
+| Icon           | Gruvbox Dark                |
+| Shell          | zsh                         |
+| Compositor     | picom                       |
+| Notification   | dunst                       |
 
 ---
 
