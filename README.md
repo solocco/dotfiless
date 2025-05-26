@@ -1,66 +1,93 @@
-🐧 Void Linux + DWM Setup (Otomatis)
+# 🐧 Void Linux + DWM Setup (Otomatis)
 
 Konfigurasi otomatis untuk Void Linux + DWM menggunakan skrip shell. Dirancang agar ringan, cepat, dan rapi tanpa display manager. Cocok untuk pengguna yang ingin sistem minimalis namun fungsional.
 
-🛠️ Fitur Utama
+---
 
-✅ Void Linux Base Setup
+## 🛠️ Fitur Utama
 
-✅ dwm, st, dmenu (build dari suckless)
+* ✅ Void Linux Base Setup
+* ✅ dwm, st, dmenu (build dari suckless)
+* ✅ Konfigurasi dotfiles otomatis
+* ✅ NetworkManager, bluetooth, pipewire, polkit
+* ✅ Rofi, picom, dunst, ZSH + Oh-My-Zsh
+* ✅ Setup font, tema (Gruvbox), dan tools penting lainnya
+* ✅ Shell interaktif & prompt reboot
 
-✅ Konfigurasi dotfiles otomatis
+---
 
-✅ NetworkManager, bluetooth, pipewire, polkit
+## 🚀 Cara Instalasi
 
-✅ Rofi, picom, dunst, ZSH + Oh-My-Zsh
+### 1. Clone repo
 
-✅ Setup font, tema, dan tools penting lainnya
-
-✅ Shell interaktif & prompt reboot
-
-🚀 Cara Instalasi
-
-1. Clone repo
-
+```bash
 git clone https://github.com/solocco/dotfiless.git
 cd dotfiless
+```
 
-2. Jalankan skrip utama
+---
 
+### 2. Jalankan skrip utama
+
+```bash
 chmod +x VoidLinux.sh
 ./VoidLinux.sh
+```
 
-Atau gunakan alternatif:
+> Atau gunakan alternatif:
+>
+> ```bash
+> chmod +x voidlinux2.sh
+> ./voidlinux2.sh
+> ```
 
-chmod +x voidlinux2.sh
-./voidlinux2.sh
+---
 
-🗂️ Struktur Folder
+## 🗂️ Struktur Folder
 
-Pastikan struktur dotfiless Anda berada di $HOME/dotfiless dan memiliki direktori berikut:
+Pastikan struktur `dotfiless` Anda berada di `$HOME/dotfiless` dan memiliki direktori berikut:
 
-<pre> ``` dotfiless/ ├── .config/ ├── .dwm/ ├── .icons/ ├── .local/ ├── .oh-my-zsh/ ├── .themes/ ├── suckless/ │ ├── dwm/ │ ├── st/ │ └── dmenu/ ├── .bashrc ├── .xinitrc ├── .zshrc └── xresources ``` </pre>
+```text
+dotfiless/
+├── .config/
+├── .dwm/
+├── .icons/
+├── .local/
+├── .oh-my-zsh/
+├── .themes/
+├── suckless/
+│   ├── dwm/
+│   ├── st/
+│   └── dmenu/
+├── .bashrc
+├── .xinitrc
+├── .zshrc
+└── xresources
+```
 
-⚙️ Setelah Instalasi
+---
 
-Reboot untuk memulai session dengan DWM dan konfigurasi lengkap.
+## ⚙️ Setelah Instalasi
 
-Gunakan startx untuk login ke DWM jika belum otomatis.
+* Reboot untuk memulai session dengan DWM dan konfigurasi lengkap.
+* Gunakan `startx` untuk login ke DWM jika belum otomatis.
 
-💡 Catatan
+---
 
-Skrip akan menghapus layanan dhcpcd & wpa_supplicant dan menggantinya dengan NetworkManager.
+## 💡 Catatan
 
-Anda bisa aktifkan service tambahan seperti libvirtd, seatd dengan mengedit skrip.
+* Skrip akan menghapus layanan `dhcpcd` & `wpa_supplicant` dan menggantinya dengan `NetworkManager`.
+* Anda bisa aktifkan service tambahan seperti `libvirtd`, `seatd` dengan mengedit skrip.
+* Pastikan koneksi internet aktif saat menjalankan.
 
-Pastikan koneksi internet aktif saat menjalankan.
+---
 
-📄 Lisensi
+## 📄 Lisensi
 
 MIT / GPL-3.0 — silakan modifikasi dan gunakan kembali sesuai kebutuhan.
 
-👤 Penulis
+---
 
-@solocco
+## 👤 Penulis
 
-
+* [@solocco](https://github.com/solocco)
