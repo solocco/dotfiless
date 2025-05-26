@@ -22,7 +22,7 @@ Konfigurasi otomatis untuk Void Linux + DWM menggunakan skrip shell. Dirancang a
 
 1. Clone repo
 
-git clone https://codeberg.org/solocco/dotfiless.git
+git clone https://github.com/solocco/dotfiless.git
 cd dotfiless
 
 2. Jalankan skrip utama
@@ -39,7 +39,7 @@ chmod +x voidlinux2.sh
 
 Pastikan struktur dotfiless Anda berada di $HOME/dotfiless dan memiliki direktori berikut:
 
-dotfiless/ ├── .config/ ├── .dwm/ ├── .icons/ ├── .local/ ├── .oh-my-zsh/ ├── .themes/ ── suckless/ │ ├── dwm/ │ ├── st/ │ └── dmenu/ ├── .bashrc ├── .xinitrc ├── .zshrc └── xresources
+<pre> ``` dotfiless/ ├── .config/ ├── .dwm/ ├── .icons/ ├── .local/ ├── .oh-my-zsh/ ├── .themes/ ├── suckless/ │ ├── dwm/ │ ├── st/ │ └── dmenu/ ├── .bashrc ├── .xinitrc ├── .zshrc └── xresources ``` </pre>
 
 ⚙️ Setelah Instalasi
 
