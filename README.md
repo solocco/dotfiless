@@ -81,8 +81,6 @@ dotfiless/
 
 ## 💡 Catatan
 
-* Skrip akan menghapus layanan `dhcpcd` & `wpa_supplicant` dan menggantinya dengan `NetworkManager`.
-* Anda bisa aktifkan service tambahan seperti `libvirtd`, `seatd` dengan mengedit skrip.
 * Pastikan koneksi internet aktif saat menjalankan.
 
 ---
