@@ -39,21 +39,7 @@ chmod +x voidlinux2.sh
 
 Pastikan struktur dotfiless Anda berada di $HOME/dotfiless dan memiliki direktori berikut:
 
-dotfiless/
-├── .config/
-├── .dwm/
-├── .icons/
-├── .local/
-├── .oh-my-zsh/
-├── .themes/
-├── suckless/
-│   ├── dwm/
-│   ├── st/
-│   └── dmenu/
-├── .bashrc
-├── .xinitrc
-├── .zshrc
-└── xresources
+dotfiless/ ├── .config/ ├── .dwm/ ├── .icons/ ├── .local/ ├── .oh-my-zsh/ ├── .themes/ ── suckless/ │ ├── dwm/ │ ├── st/ │ └── dmenu/ ├── .bashrc ├── .xinitrc ├── .zshrc └── xresources
 
 ⚙️ Setelah Instalasi
 
