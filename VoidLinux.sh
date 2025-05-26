@@ -31,13 +31,15 @@ sudo xbps-install -Sy \
 	dunst picom rofi maim slop \
 	acpi light \
 	arandr bc gtk3-nocsd gtk-engine-murrine gnome-keyring inotify-tools jq meld nano \
-	wmctrl wmname xclip xcolor xdotool yad
+	wmctrl wmname xclip xcolor xdotool yad \
+	fribidi fribidi-devel glib-devel harfbuzz-devel gd-devel \
+	lxappearance firefox pamixer bat lsd zsh
 		  
 	
-cp -r .dwm .config .icons .local .themes .xinitrc xresources suckless ~/
+cp -r .config .dwm .icons .local .oh-my-zsh .themes suckless .bashrc .xinitrc .zshrc xresources ~/
 
 # Build suckless programs
-SUCKLESS_DIR="$HOME/suckless"
+SUCKLESS_DIR="$HOME/dotfiless/suckless"
 
 for prog in dwm dmenu st; do
 	PROG_PATH="$SUCKLESS_DIR/$prog"
@@ -87,6 +89,10 @@ sudo rm -f /var/service/dhcpcd
 
 # Update GRUB config
 sudo grub-mkconfig -o /boot/grub/grub.cfg
+
+# change bash to zsh
+sudo chsh -s /usr/bin/zsh
+#sudo chsh -s /usr/bin/zsh "$USERNAME"
 
 # Reboot system
 sudo reboot
