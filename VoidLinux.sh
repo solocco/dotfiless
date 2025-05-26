@@ -90,6 +90,9 @@ sudo rm -f /var/service/dhcpcd
 # Update GRUB config
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 
+#update dir
+xdg-user-dirs-update
+
 # change bash to zsh
 sudo chsh -s /usr/bin/zsh
 #sudo chsh -s /usr/bin/zsh "$USERNAME"

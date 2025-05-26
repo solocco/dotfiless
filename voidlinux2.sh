@@ -111,6 +111,9 @@ sudo rm -f /var/service/dhcpcd
 banner "Mengupdate konfigurasi GRUB"
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 
+banner "Update direktori"
+xdg-user-dirs-update
+
 banner "Mengubah shell default ke zsh untuk $USERNAME"
 sudo chsh -s /usr/bin/zsh "$USERNAME"
 
