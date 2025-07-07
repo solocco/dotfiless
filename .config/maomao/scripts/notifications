@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+# Launch mako with alt config
+
+CONFIG="$HOME/.config/maoamo/mako/config"
+
+if ! pidof mako >/dev/null; then
+	mako --config "$CONFIG" &
+fi

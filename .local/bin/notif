@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# Autonotif: Start mako in Wayland, dunst in X11
+# For hybrid setups using both X11 and Wayland
+
+if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+    # Kill dunst if it auto-spawned (e.g., from portal)
+    pkill -x dunst 2>/dev/null
+
+    # Start mako if not already running
+    pgrep -x mako > /dev/null || exec mako
+
+elif [ "$XDG_SESSION_TYPE" = "x11" ]; then
+    # Start dunst if not already running
+    pgrep -x dunst > /dev/null || exec dunst
+fi

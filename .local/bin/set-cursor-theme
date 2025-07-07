@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# Set cursor theme consistently across Wayland
+# Dependencies: swaybg (optional), foot (optional)
+# Theme: Bibata-Modern-Ice
+
+set -euo pipefail
+
+# Cursor config
+export XCURSOR_THEME="Bibata-Modern-Ice"
+export XCURSOR_SIZE=24
+
+# GTK
+mkdir -p ~/.config/gtk-3.0 ~/.config/gtk-4.0
+cat > ~/.config/gtk-3.0/settings.ini <<EOF
+[Settings]
+gtk-cursor-theme-name=$XCURSOR_THEME
+gtk-cursor-theme-size=$XCURSOR_SIZE
+EOF
+
+cp ~/.config/gtk-3.0/settings.ini ~/.config/gtk-4.0/settings.ini
+
+# Qt
+mkdir -p ~/.config/environment.d
+cat > ~/.config/environment.d/99cursor.conf <<EOF
+XCURSOR_THEME=$XCURSOR_THEME
+XCURSOR_SIZE=$XCURSOR_SIZE
+QT_QPA_PLATFORMTHEME=qt5ct
+EOF
+
+# X11 fallback
+mkdir -p ~/.icons/default
+ln -sf /usr/share/icons/${XCURSOR_THEME} ~/.icons/default
+
+# Set root cursor by spawning dummy foot
+# (Only needed if your compositor doesn't set seat cursor)
+foot --app-id="cursor-setter" --title="cursor-setter" --window-size-pixels=1x1 --override-title & disown
+
+# Optional: set background (which also sets cursor for root)
+# swaybg -i ~/Pictures/Wallpapers/gruvbox-bg.png & disown
+
+notify-send "Cursor theme applied: $XCURSOR_THEME ($XCURSOR_SIZE)"

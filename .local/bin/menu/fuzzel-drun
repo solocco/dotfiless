@@ -1,0 +1,33 @@
+#!/bin/bash
+
+cache_file="${XDG_CACHE_HOME:-$HOME/.cache}/fuzzel-drun-cache"
+hist_file="${XDG_CACHE_HOME:-$HOME/.cache}/fuzzel-drun-history"
+
+# Buat cache jika belum ada atau sudah lebih dari 1 hari
+if [[ ! -f "$cache_file" || "$(find "$cache_file" -mtime +0 2>/dev/null)" ]]; then
+    mkdir -p "$(dirname "$cache_file")"
+    echo "Generating application cache..." >&2
+
+    find /usr/share/applications ~/.local/share/applications -type f -name "*.desktop" 2>/dev/null | while IFS= read -r file; do
+        grep -q '^NoDisplay=true' "$file" && continue
+        grep -q '^Type=Application' "$file" || continue
+
+        name=$(grep -m1 '^Name=' "$file" | cut -d= -f2-)
+        exec=$(grep -m1 '^Exec=' "$file" | cut -d= -f2- | sed 's/ *%[fFuUdDnNickvm]//g')
+
+        [[ -n "$name" && -n "$exec" ]] && echo -e "$name\t$exec"
+    done | sort -u > "$cache_file"
+fi
+
+# Gabungkan cache + histori agar aplikasi yang sering dipakai naik
+combined=$(awk -F '\t' 'FNR==NR { count[$1]++; next } { print count[$1] "\t" $0 }' "$hist_file" "$cache_file" 2>/dev/null | sort -k1,1nr | cut -f2-)
+
+# Input ke fuzzel via stdin
+choice=$(echo "$combined" | cut -f1 | fuzzel --prompt " App > ")
+
+# Cari command dan jalankan
+cmd=$(echo "$combined" | awk -F '\t' -v name="$choice" '$1 == name { print $2; exit }')
+if [[ -n "$cmd" ]]; then
+    echo "$choice" >> "$hist_file"
+    setsid bash -c "$cmd" >/dev/null 2>&1 &
+fi

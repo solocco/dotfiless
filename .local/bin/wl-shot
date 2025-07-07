@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+# Screenshot helper for Wayland (Sway/Maomaowm)
+# Depends: grim, slurp, wl-copy, notify-send, paplay
+# Optional: swappy
+# GitHub @bitterhalt - Modified by ChatGPT
+
+set -euo pipefail
+
+SAVEDIR="${HOME}/Pictures/Screenshots/"
+mkdir -p -- "$SAVEDIR"
+TIMESTAMP=$(date +'%Y-%m-%d-%H-%M-%S')
+FILENAME="$SAVEDIR/${TIMESTAMP}_screenshot.png"
+ICON="$HOME/.local/share/icons/feather/camera.svg"
+SOUND="$HOME/.local/share/sounds/camera-shutter.oga"
+
+play_shutter() {
+  if command -v paplay >/dev/null && [[ -f "$SOUND" ]]; then
+    paplay "$SOUND" &
+  fi
+}
+
+notify_shot() {
+  notify-send -t 5000 -i "$ICON" "📸 Screenshot" "Saved to $SAVEDIR"
+}
+
+fullscreen() {
+  grim "$FILENAME" && {
+    wl-copy <"$FILENAME"
+    notify_shot
+    play_shutter
+  }
+}
+
+region() {
+  grim -g "$(slurp)" "$FILENAME" && {
+    wl-copy <"$FILENAME"
+    notify_shot
+    play_shutter
+  }
+}
+
+region_edit() {
+  TMPFILE="$(mktemp --suffix=.png)"
+  grim -g "$(slurp)" "$TMPFILE" && swappy -f "$TMPFILE"
+}
+
+timer() {
+  sleep 5
+  grim "$FILENAME" && {
+    wl-copy <"$FILENAME"
+    notify-send -t 5000 -i "$ICON" "⏱️ Screenshot (Delayed)" "Saved to $SAVEDIR"
+    play_shutter
+  }
+}
+
+print_help() {
+  echo "Usage: wl-shot [options]"
+  echo "Options:"
+  echo "  -f,  --fullscreen       Capture the fullscreen."
+  echo "  -r,  --region           Select a region to capture."
+  echo "  -re, --region-edit      Select a region and edit with swappy."
+  echo "  -t,  --timer            Delay 5s then capture fullscreen."
+  echo "  -h,  --help             Show this help message."
+}
+
+# Argument parsing
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -f|--fullscreen) fullscreen ;;
+    -r|--region) region ;;
+    -re|--region-edit) region_edit ;;
+    -t|--timer) timer ;;
+    -h|--help) print_help ;;
+    *) echo "❌ Unknown option: $1"; print_help; exit 1 ;;
+  esac
+  shift
+done

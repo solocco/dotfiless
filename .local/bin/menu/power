@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# https://github.com/bitterhalt
+set -euo pipefail
+
+MENU="fuzzel -d -a top-right --x 4 --y 4 -l5 -w 14 -p exit:"
+CONFIRM="fuzzel -d -a top-right --x 4 --y 4 -l2 -w 14 -p Sure?"
+
+selection=$(printf "%s\n" "󰌾  Lock" "󰍃  Logout" "󰒲  Suspend" "󰑓  Reboot" "  Shutdown" | $MENU)
+
+case "$selection" in
+  "  Shutdown")
+    confirm=$(echo -e "Yes\nNo" | $CONFIRM)
+    [[ "$confirm" == "Yes" ]] && doas poweroff
+    ;;
+  "󰑓  Reboot")
+    confirm=$(echo -e "Yes\nNo" | $CONFIRM)
+    [[ "$confirm" == "Yes" ]] && doas reboot
+    ;;
+  "󰒲  Suspend")
+    swaylock -f
+    sleep 2
+    doas zzz
+    ;;
+  "󰌾  Lock")
+    "$HOME/.config/river/scripts/locker.sh"
+    ;;
+  "󰍃  Logout")
+    pkill -u "$(id -u -n)"
+    ;;
+esac

@@ -1,0 +1,5 @@
+/* Text Font */
+
+* {
+    font: "Cid Mono Nerd Font 10";
+}

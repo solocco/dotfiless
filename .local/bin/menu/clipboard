@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+MENU="fuzzel --dmenu -a top --y 4 -w 60 -l 20"
+
+# Menu spesial (akan ditaruh di bawah)
+special_items=(
+  "────────────"
+  "󰈊 Show current clipboard"
+  "󰆴 Clear clipboard history"
+  "󰌹 Exit"
+)
+
+# Ambil isi clipboard history
+mapfile -t history < <(cliphist list)
+
+# Gabungkan history + pemisah + menu
+choices=("${history[@]}" "${special_items[@]}")
+selected=$(printf "%s\n" "${choices[@]}" | $MENU --prompt "📋 clipboard:")
+
+[[ -z "$selected" ]] && exit 0
+
+# Handle menu di bawah
+case "$selected" in
+  "󰆴 Clear clipboard history")
+    confirm=$(echo -e "Yes\nNo" | fuzzel --dmenu -a top --y 4 -w 40 -l 2 -p "󰆴 Are you sure?")
+    if [[ "$confirm" == "Yes" ]]; then
+      rm -f "$XDG_CACHE_HOME/cliphist/db"
+      notify-send "󰆴 Clipboard" "History wiped"
+    fi
+    ;;
+  "󰈊 Show current clipboard")
+    wl-paste | fuzzel --dmenu -a top --y 4 -w 70 -l 10 -p "Current clipboard:"
+    ;;
+  "󰌹 Exit")
+    exit 0
+    ;;
+  "────────────")
+    exit 0
+    ;;
+  *)
+    # Pilih isi clipboard dan salin ulang
+    printf "%s\n" "$selected" | cliphist decode | wl-copy
+    notify-send "📋 Clipboard" "Copied: $(echo "$selected" | cut -c1-50)…"
+    ;;
+esac

@@ -1,0 +1,54 @@
+* {
+  padding: 0px;
+  margin: 0px;
+}
+
+window#waybar {
+  background-color: transparent;
+}
+
+button,
+label {
+  font-family: "Cid Mono Nerd Font";
+  font-size: 15px;
+  font-weight: bold;
+  border-radius: 4px;
+  padding: 0px 15px;
+}
+
+#tags button {
+  background-color: #3c3836;
+  font-weight: bold;
+  padding: 0px;
+  margin-right: 3px;
+}
+
+#tags button.occupied {
+  background-color: #7c6f64;
+  color: #282828
+}
+
+#tags button.focused {
+  background-color: #ebdbb2;
+  color: #282828;
+}
+
+#window {
+  font-weight: bold;
+}
+
+#tray.horizontal {
+  background-color: #3c3836;
+  padding: 0px 10px;
+  border-radius: 4px;
+}
+
+.module:not(#tags):not(#window) {
+  background-color: #3c3836;
+  color: #ebdbb2;
+}
+
+#battery.critical {
+  background-color: #fb4934;
+  color: #3c3836;
+}

@@ -1,0 +1,170 @@
+#!/usr/bin/env bash
+
+# Screenshot script for maomaowm with mmsg IPC support
+# Requires: grim, slurp, wl-copy, rofi-wayland, notify-send, paplay, viewnior, (optional: mmsg)
+
+# === Config paths ===
+CONFIG_DIR="$HOME/.config/maomao"
+CONFIG_FILE="$CONFIG_DIR/maomaowm.conf"
+RASI="$CONFIG_DIR/rofi/screenshot.rasi"
+ICON_DIR="$CONFIG_DIR/mako/icons"
+
+# === Helper: Extract color or fallback ===
+get_color() {
+	grep -m1 "^$1=" "$CONFIG_FILE" 2>/dev/null | cut -d'=' -f2
+}
+
+# === Get Colors ===
+rootcolor=$(get_color rootcolor)
+focuscolor=$(get_color focuscolor)
+[[ -z "$rootcolor" ]] && rootcolor="0x201b1480"
+[[ -z "$focuscolor" ]] && focuscolor="0xc9b890ff"
+
+# === Strip 0x prefix ===
+root_rgba="${rootcolor#0x}"
+focus_rgba="${focuscolor#0x}"
+
+# === Slurp colors ===
+slurp_bg="${root_rgba:0:6}80"
+slurp_border="${focus_rgba:0:6}ff"
+slurp_select="${focus_rgba:0:6}22"
+
+# === Rofi UI ===
+prompt="Screenshot"
+mesg="Directory :: $(xdg-user-dir PICTURES)/Screenshots"
+layout=$(grep 'USE_ICON' "$RASI" 2>/dev/null | cut -d'=' -f2)
+
+if [[ "$layout" == "NO" ]]; then
+	option_1=" Capture Desktop"
+	option_2=" Capture Area"
+	option_3=" Capture Window"
+	option_4=" Capture in 5s"
+	option_5=" Capture in 10s"
+else
+	option_1=""
+	option_2=""
+	option_3=""
+	option_4=""
+	option_5=""
+fi
+
+# === Check dependencies ===
+deps=(grim slurp wl-copy rofi-wayland notify-send paplay viewnior)
+for cmd in "${deps[@]}"; do
+	command -v "$cmd" &>/dev/null || {
+		notify-send -u critical "Missing dependency: $cmd"
+		exit 1
+	}
+done
+
+# Optional: mmsg
+has_mmsg=1
+command -v mmsg &>/dev/null || has_mmsg=0
+
+# === Output setup ===
+timestamp=$(date +%Y-%m-%d-%H-%M-%S)
+geometry="wayland"
+dir="$(xdg-user-dir PICTURES)/Screenshots"
+file="Screenshot_${timestamp}_${geometry}.png"
+mkdir -p "$dir"
+
+# === Rofi launcher ===
+rofi_cmd() {
+	rofi-wayland -dmenu \
+		-p "$prompt" \
+		-mesg "$mesg" \
+		-markup-rows \
+		-theme "$RASI"
+}
+
+run_rofi() {
+	echo -e "$option_1\n$option_2\n$option_3\n$option_4\n$option_5" | rofi_cmd
+}
+
+# === Notify + preview ===
+notify_view() {
+	notify-send -h string:x-canonical-private-synchronous:sys-notify-shot \
+		-u low -i "$ICON_DIR/picture.png" "Copied to clipboard."
+	paplay /usr/share/sounds/freedesktop/stereo/screen-capture.oga &>/dev/null &
+	viewnior "$dir/$file" &
+	if [[ -f "$dir/$file" ]]; then
+		notify-send -u low -i "$ICON_DIR/picture.png" "Screenshot Saved"
+	else
+		notify-send -u low -i "$ICON_DIR/picture.png" "Screenshot Deleted"
+	fi
+}
+
+# === Countdown ===
+countdown() {
+	for sec in $(seq "$1" -1 1); do
+		notify-send -h string:x-canonical-private-synchronous:sys-notify-count \
+			-t 1000 -i "$ICON_DIR/timer.png" "Taking shot in: $sec"
+		sleep 1
+	done
+}
+
+# === Capture functions ===
+shotnow() {
+	cd "$dir" && grim - | tee "$file" | wl-copy
+	notify_view
+}
+
+shot5() {
+	countdown 5
+	sleep 1 && cd "$dir" && grim - | tee "$file" | wl-copy
+	notify_view
+}
+
+shot10() {
+	countdown 10
+	sleep 1 && cd "$dir" && grim - | tee "$file" | wl-copy
+	notify_view
+}
+
+shotarea() {
+	cd "$dir" && grim -g "$(slurp -b "$slurp_bg" -c "$slurp_border" -s "$slurp_select" -w 2)" - | tee "$file" | wl-copy
+	notify_view
+}
+
+shotwin() {
+	if [[ "$has_mmsg" -eq 1 ]]; then
+		rect=$(mmsg active geometry)
+	else
+		rect=""
+	fi
+
+	if [[ -z "$rect" ]]; then
+		# fallback manual slurp
+		rect=$(slurp -b "$slurp_bg" -c "$slurp_border" -s "$slurp_select" -w 2)
+	fi
+
+	if [[ -z "$rect" ]]; then
+		notify-send -u low -i "$ICON_DIR/picture.png" "Screenshot Cancelled"
+		exit 1
+	fi
+
+	cd "$dir" && grim -g "$rect" - | tee "$file" | wl-copy
+	notify_view
+}
+
+# === Dispatcher ===
+run_cmd() {
+	case "$1" in
+		--opt1) shotnow ;;
+		--opt2) shotarea ;;
+		--opt3) shotwin ;;
+		--opt4) shot5 ;;
+		--opt5) shot10 ;;
+	esac
+}
+
+# === Run ===
+choice="$(run_rofi)"
+case "$choice" in
+	"$option_1") run_cmd --opt1 ;;
+	"$option_2") run_cmd --opt2 ;;
+	"$option_3") run_cmd --opt3 ;;
+	"$option_4") run_cmd --opt4 ;;
+	"$option_5") run_cmd --opt5 ;;
+	*) exit 1 ;;
+esac
