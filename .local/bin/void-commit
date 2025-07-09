@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+BRANCH_TARGET="repo-sendiri"
+GIT_DIR="$HOME/project/void-packages"
+
+cd "$GIT_DIR"
+
+# 1. Pastikan master sync dengan upstream
+echo "🔄 Syncing master dari upstream..."
+git checkout master
+git fetch upstream
+git reset --hard upstream/master
+
+# 2. Pindah atau buat branch repo-sendiri
+if ! git show-ref --verify --quiet refs/heads/"$BRANCH_TARGET"; then
+    echo "🌱 Branch '$BRANCH_TARGET' belum ada. Membuat dari master..."
+    git checkout -b "$BRANCH_TARGET"
+else
+    echo "🔀 Pindah ke branch '$BRANCH_TARGET'..."
+    git checkout "$BRANCH_TARGET"
+
+    echo "🔁 Rebase '$BRANCH_TARGET' di atas master..."
+    git rebase master
+fi
+
+# 3. Deteksi folder srcpkgs/ yang berubah
+changed_dirs=$(git status --short srcpkgs/ | awk '{print $2}' | cut -d/ -f2 | sort -u)
+
+if [[ -z "$changed_dirs" ]]; then
+    echo "❌ Tidak ada perubahan di srcpkgs/ yang terdeteksi."
+    exit 0
+fi
+
+# 4. Commit satu per satu berdasarkan folder
+for dir in $changed_dirs; do
+    pkgdir="srcpkgs/$dir"
+    if git ls-files --others --exclude-standard | grep -q "^$pkgdir"; then
+        msg="add $dir"
+    else
+        msg="update $dir"
+    fi
+
+    echo "📦 Deteksi perubahan: $msg"
+    git add "$pkgdir"
+    git commit -m "$msg"
+done
+
+# 5. Push branch ke GitHub
+git push -u origin "$BRANCH_TARGET"
+
+echo "✅ Commit & push ke '$BRANCH_TARGET' selesai!"

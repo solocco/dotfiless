@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+BRANCH="repo-sendiri"
+
+cd ~/project/void-packages
+
+echo "🔁 Syncing master..."
+git checkout master
+git fetch upstream
+git reset --hard upstream/master
+
+echo "🌱 Rebase $BRANCH..."
+git checkout "$BRANCH"
+git rebase master
+
+echo "✅ Sync complete: master updated, $BRANCH updated on top of it."
