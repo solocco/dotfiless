@@ -18,9 +18,17 @@ if [ -z "$CHANGES" ]; then
     exit 0
 fi
 
-# Ambil direktori/folder level-2 (misal: srcpkgs/telegram-desktop-bin)
-ITEMS=$(echo "$CHANGES" | awk -F/ '{print $1"/"$2}' | sort -u | tr '\n' ' ')
-COMMIT_MSG="auto: update ${ITEMS}"
+# Ubah daftar file jadi format natural
+FILES=($CHANGES)
+COUNT=${#FILES[@]}
+
+if [[ $COUNT -eq 1 ]]; then
+    FILE_LIST="modified ${FILES[0]}"
+else
+    FILE_LIST="modified ${FILES[*]:0:$((COUNT - 1))} and ${FILES[-1]}"
+fi
+
+COMMIT_MSG="update: ${FILE_LIST}"
 
 # Commit & push
 echo "📦 Commit: $COMMIT_MSG"
