@@ -1,52 +1,45 @@
-#!/usr/bin/env bash
+#!/bin/bash
 set -euo pipefail
 
-BRANCH_TARGET="repo-sendiri"
-GIT_DIR="$HOME/project/void-packages"
+cd /home/cid/project/void-packages
 
-cd "$GIT_DIR"
-
-# 1. Pastikan master sync dengan upstream
 echo "🔄 Syncing master dari upstream..."
+
+# Step 1: Reset master ke upstream/master
 git checkout master
 git fetch upstream
 git reset --hard upstream/master
+echo "✅ master disamakan dengan upstream/master"
 
-# 2. Pindah atau buat branch repo-sendiri
-if ! git show-ref --verify --quiet refs/heads/"$BRANCH_TARGET"; then
-    echo "🌱 Branch '$BRANCH_TARGET' belum ada. Membuat dari master..."
-    git checkout -b "$BRANCH_TARGET"
+# Step 2: Push master ke origin supaya GitHub tahu branch ini bersih
+git push origin master
+echo "📤 master dipush ke origin"
+
+# Step 3: Checkout ke branch kerja
+echo "🔀 Pindah ke branch 'repo-sendiri'..."
+git checkout repo-sendiri
+
+# Step 4: Rebase commit lokal kamu di atas master yang baru
+echo "🔁 Rebase 'repo-sendiri' di atas master..."
+git rebase master || {
+  echo "❌ Rebase gagal. Selesaikan konflik lalu jalankan ulang void-commit."
+  exit 1
+}
+
+# Step 5: Commit perubahan srcpkgs/ kalau ada
+if git status --porcelain | grep -q '^. srcpkgs/'; then
+    echo "📦 Perubahan srcpkgs/ terdeteksi → auto commit"
+    git add srcpkgs/
+    COMMIT_MSG=$(basename "$(find srcpkgs -mindepth 2 -maxdepth 2 -type f -name template | head -n1 | xargs dirname)")
+    git commit -m "update $COMMIT_MSG"
+fi
+
+# Step 6: Cek apakah ada commit baru dibanding origin
+if git log origin/repo-sendiri..repo-sendiri | grep . >/dev/null; then
+    echo "📤 Push repo-sendiri ke origin..."
+    git push origin repo-sendiri
 else
-    echo "🔀 Pindah ke branch '$BRANCH_TARGET'..."
-    git checkout "$BRANCH_TARGET"
-
-    echo "🔁 Rebase '$BRANCH_TARGET' di atas master..."
-    git rebase master
+    echo "✅ Tidak ada commit baru di repo-sendiri, skip push."
 fi
 
-# 3. Deteksi folder srcpkgs/ yang berubah
-changed_dirs=$(git status --short srcpkgs/ | awk '{print $2}' | cut -d/ -f2 | sort -u)
-
-if [[ -z "$changed_dirs" ]]; then
-    echo "❌ Tidak ada perubahan di srcpkgs/ yang terdeteksi."
-    exit 0
-fi
-
-# 4. Commit satu per satu berdasarkan folder
-for dir in $changed_dirs; do
-    pkgdir="srcpkgs/$dir"
-    if git ls-files --others --exclude-standard | grep -q "^$pkgdir"; then
-        msg="add $dir"
-    else
-        msg="update $dir"
-    fi
-
-    echo "📦 Deteksi perubahan: $msg"
-    git add "$pkgdir"
-    git commit -m "$msg"
-done
-
-# 5. Push branch ke GitHub
-git push -u origin "$BRANCH_TARGET"
-
-echo "✅ Commit & push ke '$BRANCH_TARGET' selesai!"
+echo "✅ Selesai!"
