@@ -27,43 +27,44 @@ environment {
 }
 
 binds {
-	  Mod+Return {spawn "~/.local/bin/foot-term";}
-    Mod+Shift+Return {spawn "~/.local/bin/foot-term" "-f";}
-	  Mod+WheelScrollDown cooldown-ms=150 { focus-workspace-down; }
-	  Mod+WheelScrollUp   cooldown-ms=150 { focus-workspace-up; }
+	Mod+Return {spawn "foot-term";}
+  Mod+Shift+Return {spawn "foot-term" "-f";}
+	Mod+WheelScrollDown cooldown-ms=150 { focus-workspace-down; }
+	Mod+WheelScrollUp   cooldown-ms=150 { focus-workspace-up; }
 
-	  Mod+Right                { focus-column-right; }
-	  Mod+Left                 { focus-column-left; }
-    Mod+Down  { focus-window-down; }
-    Mod+Up    { focus-window-up; }
-    Mod+H     { focus-column-left; }
-    Mod+L     { focus-column-right; }
+	Mod+Right                { focus-column-right; }
+	Mod+Left                 { focus-column-left; }
+  Mod+Down  { focus-window-down; }
+  Mod+Up    { focus-window-up; }
+  Mod+H     { focus-column-left; }
+  Mod+L     { focus-column-right; }
 
-    Mod+Ctrl+Left  { move-column-left; }
-    Mod+Ctrl+Down  { move-window-down; }
-    Mod+Ctrl+Up    { move-window-up; }
-    Mod+Ctrl+Right { move-column-right; }
-    Mod+Ctrl+H     { move-column-left; }
-    Mod+Ctrl+L     { move-column-right; }
+  Mod+Ctrl+Left  { move-column-left; }
+  Mod+Ctrl+Down  { move-window-down; }
+  Mod+Ctrl+Up    { move-window-up; }
+  Mod+Ctrl+Right { move-column-right; }
+  Mod+Ctrl+H     { move-column-left; }
+  Mod+Ctrl+L     { move-column-right; }
   
-    Mod+O { toggle-overview; }
-    Mod+v { toggle-window-floating; }
-    Mod+Shift+v { switch-focus-between-floating-and-tiling; }
+  Mod+O { toggle-overview; }
+  Mod+v { toggle-window-floating; }
+  Mod+Shift+v { switch-focus-between-floating-and-tiling; }
 
-    Mod+J     { focus-window-or-workspace-down; }
-    Mod+K     { focus-window-or-workspace-up; }
-    Mod+Ctrl+J     { move-window-down-or-to-workspace-down; }
-    Mod+Ctrl+K     { move-window-up-or-to-workspace-up; }
 
-    Mod+Home { focus-column-first; }
-    Mod+End  { focus-column-last; }
-    Mod+Ctrl+Home { move-column-to-first; }
-    Mod+Ctrl+End  { move-column-to-last; }
+  Mod+J     { focus-window-or-workspace-down; }
+  Mod+K     { focus-window-or-workspace-up; }
+  Mod+Ctrl+J     { move-window-down-or-to-workspace-down; }
+  Mod+Ctrl+K     { move-window-up-or-to-workspace-up; }
 
-    Mod+Shift+Left  { focus-monitor-left; }
-    Mod+Shift+Down  { focus-monitor-down; }
-    Mod+Shift+Up    { focus-monitor-up; }
-    Mod+Shift+Right { focus-monitor-right; }
+  Mod+Home { focus-column-first; }
+  Mod+End  { focus-column-last; }
+  Mod+Ctrl+Home { move-column-to-first; }
+  Mod+Ctrl+End  { move-column-to-last; }
+
+  Mod+Shift+Left  { focus-monitor-left; }
+  Mod+Shift+Down  { focus-monitor-down; }
+  Mod+Shift+Up    { focus-monitor-up; }
+  Mod+Shift+Right { focus-monitor-right; }
     Mod+Shift+H     { focus-monitor-left; }
     Mod+Shift+J     { focus-monitor-down; }
     Mod+Shift+K     { focus-monitor-up; }
@@ -137,24 +138,23 @@ binds {
 
     Mod+Alt+0        { set-column-width "1200"; }
     
-// Volume
+   // Volume keys mappings for PipeWire & WirePlumber.
     XF86AudioRaiseVolume  allow-when-locked=true { spawn "/home/cid/.local/bin/volume.sh" "--inc"; }
     XF86AudioLowerVolume allow-when-locked=true { spawn "/home/cid/.local/bin/volume.sh" "--dec"; }
     XF86AudioMute allow-when-locked=true { spawn "/home/cid/.local/bin/volume.sh" "--toggle"; }
     XF86AudioMicMute allow-when-locked=true { spawn "/home/cid/.local/bin/volume.sh" "--toggle-mic"; }
-
-// Brightness  
+     
     XF86MonBrightnessUp { spawn "/home/cid/.local/bin/brightness.sh" "--inc"; }
     XF86MonBrightnessDown { spawn "/home/cid/.local/bin/brightness.sh" "--dec"; }
-    
-    Mod+Shift+E { quit; }
-	  Mod+A { maximize-column; }
-	  Mod+Q { close-window; }
-	  Print { screenshot-screen write-to-disk=true; }
-	  Super+T { toggle-window-floating; }
-	  Mod+S { spawn "/home/cid/.config/niri/scripts/rofi_screenshot"; }
-	  Mod+d { spawn "/home/cid/.config/niri/scripts/rofi_launcher"; }
-	  Mod+x { spawn "/home/cid/.config/niri/scripts/rofi_powermenu"; }
+  Mod+Shift+E { quit; }
+	Mod+A { maximize-column; }
+	Mod+Q { close-window; }
+	Print { screenshot-screen write-to-disk=true; }
+	Super+T { toggle-window-floating; }
+	Mod+S { spawn "/home/cid/.config/niri/scripts/rofi_screenshot"; }
+	//Mod+d { spawn "rofi" "-show" "drun"; }
+	Mod+d { spawn "/home/cid/.config/niri/scripts/rofi_launcher"; }
+	Mod+x { spawn "/home/cid/.config/niri/scripts/rofi_powermenu"; }
 }
 
 layout {
@@ -219,7 +219,6 @@ window-rule {
     match app-id="goodvibes"
     match app-id="de.haeckerfelix.Shortwave"
     match app-id="transmission-gtk"
-    match app-id="org.telegram.desktop"
     match app-id="galculator"
     match app-id="com.github.wwmm.easyeffects"
     match app-id="blueman-manager"

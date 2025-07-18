@@ -3,5 +3,5 @@
 /* Text Font */
 
 * {
-    font: "Cid Mono Nerd Font Medium 11";
+    font: "SF Mono Nerd Font Medium 11";
 }

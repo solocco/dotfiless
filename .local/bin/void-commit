@@ -1,66 +1,92 @@
-#!/bin/bash
-set -euo pipefail
+#!/usr/bin/env bash
 
-cd /home/cid/project/void-packages
+set -e
 
-echo "🔄 Syncing master dari upstream..."
-
-# Step 1: Reset master ke upstream/master
-git checkout master
-git fetch upstream
-git reset --hard upstream/master
-echo "✅ master disamakan dengan upstream/master"
-
-# Step 2: Push master ke origin supaya GitHub tahu branch ini bersih
-git push origin master
-echo "📤 master dipush ke origin"
-
-# Step 3: Checkout ke branch kerja
-echo "🔀 Pindah ke branch 'repo-sendiri'..."
-git checkout repo-sendiri
-
-# Step 4: Sync dengan remote
-git fetch origin
-
-# Step 5: Deteksi divergensi lokal vs remote
-LOCAL=$(git rev-parse repo-sendiri)
-REMOTE=$(git rev-parse origin/repo-sendiri)
-BASE=$(git merge-base repo-sendiri origin/repo-sendiri)
-
-if [[ "$LOCAL" != "$REMOTE" ]]; then
-    echo "⚠️  Deteksi divergensi dengan origin/repo-sendiri, melakukan rebase ke remote..."
-    git rebase origin/repo-sendiri
-fi
-
-echo "🔁 Rebase 'repo-sendiri' di atas master..."
-git rebase master || {
-    echo "❌ Rebase gagal. Selesaikan konflik lalu jalankan ulang void-commit."
+cd /home/cid/project/void-packages || {
+    echo "❌ Folder void-packages tidak ditemukan"
     exit 1
 }
 
-# Step 6: Auto commit perubahan srcpkgs/ kalau ada
-if git status --porcelain | grep -q '^. srcpkgs/'; then
-    echo "📦 Perubahan srcpkgs/ terdeteksi → auto commit"
-    git add srcpkgs/
-    COMMIT_MSG=$(basename "$(find srcpkgs -mindepth 2 -maxdepth 2 -type f -name template | head -n1 | xargs dirname)")
-    git commit -m "update $COMMIT_MSG"
-fi
+sync_upstream() {
+    echo "🔄 Syncing master dari upstream..."
 
-# Step 7: Push hanya jika belum identik dengan remote
-LOCAL=$(git rev-parse repo-sendiri)
-REMOTE=$(git rev-parse origin/repo-sendiri)
-BASE=$(git merge-base repo-sendiri origin/repo-sendiri)
+    git checkout master || {
+        echo "❌ Gagal checkout ke master"
+        exit 1
+    }
 
-if [[ "$LOCAL" != "$REMOTE" ]]; then
-    echo "📤 Push repo-sendiri ke origin..."
-    if [[ "$BASE" != "$REMOTE" ]]; then
-        echo "🔁 Divergen → push dengan force-with-lease"
-        git push --force-with-lease origin repo-sendiri
+    if [[ "$1" == "--keep" ]]; then
+        echo "🛑 Lewatkan stash karena --keep dipakai"
     else
-        git push origin repo-sendiri
+        echo "📦 Menyimpan perubahan lokal ke stash..."
+        git stash push -m "void-commit-auto-stash" || true
     fi
-else
-    echo "✅ Branch repo-sendiri sudah identik dengan origin, skip push."
-fi
 
-echo "✅ Selesai!"
+    git fetch upstream
+    git reset --hard upstream/master
+    git clean -fd
+    echo "✅ master disamakan dengan upstream/master"
+}
+
+commit_changes() {
+    echo "🔀 Checkout ke branch repo-sendiri..."
+    git checkout repo-sendiri
+
+    # Auto commit jika ada perubahan di srcpkgs
+    if git status --porcelain | grep -q '^ M srcpkgs/'; then
+        echo "📦 Perubahan srcpkgs/ terdeteksi → auto commit"
+        git add srcpkgs/
+
+        # Coba ambil nama direktori paket sebagai pesan commit
+        COMMIT_MSG=$(basename "$(find srcpkgs -mindepth 2 -maxdepth 2 -type f -name template -newermt '1 minute ago' | head -n1 | xargs dirname 2>/dev/null)")
+        [[ -z "$COMMIT_MSG" ]] && COMMIT_MSG="update template"
+        git commit -m "$COMMIT_MSG"
+    fi
+
+    echo "🔁 Rebase repo-sendiri di atas master..."
+    git fetch origin
+    git rebase master || {
+        echo "❌ Rebase gagal. Selesaikan konflik lalu jalankan ulang."
+        exit 1
+    }
+
+    LOCAL=$(git rev-parse repo-sendiri)
+    REMOTE=$(git rev-parse origin/repo-sendiri)
+    BASE=$(git merge-base repo-sendiri origin/repo-sendiri)
+
+    if [[ "$LOCAL" != "$REMOTE" ]]; then
+        echo "📤 Push repo-sendiri ke origin..."
+        if [[ "$BASE" != "$REMOTE" ]]; then
+            echo "🔁 Divergen → push dengan force-with-lease"
+            git push --force-with-lease origin repo-sendiri
+        else
+            git push origin repo-sendiri
+        fi
+    else
+        echo "✅ Branch repo-sendiri sudah identik dengan origin, skip push."
+    fi
+
+    echo "✅ Selesai!"
+}
+
+restore_stash() {
+    if git stash list | grep -q "void-commit-auto-stash"; then
+        echo "📤 Mengembalikan perubahan lokal dari stash..."
+        git stash pop
+    fi
+}
+
+case "$1" in
+    --commit)
+        commit_changes
+        ;;
+    --keep)
+        sync_upstream --keep
+        commit_changes
+        ;;
+    *)
+        sync_upstream
+        commit_changes
+        restore_stash
+        ;;
+esac

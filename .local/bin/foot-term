@@ -7,7 +7,7 @@ DIR="$HOME/.config/"
 background="`cat $DIR/rofi/shared/colors.rasi | grep 'background:' | cut -d':' -f2 | tr -d ' '\;`"
 accent="`cat $DIR/rofi/shared/colors.rasi | grep 'selected:' | cut -d':' -f2 | tr -d ' '\;`"
 
-CONFIG="$HOME/.config/maomao/foot/foot.ini"
+CONFIG="$HOME/.config/foot/foot.ini"
 
 if [ "$1" == "-f" ]; then
 	foot --app-id='foot-float' --config="$CONFIG"

@@ -4,7 +4,7 @@
 
 THEME='Gruvbox-Material-Dark'
 ICONS='Gruvbox-Material-Dark'
-FONT='Cid Mono Nerd Font 12'
+FONT='SF Mono Nerd Font 12'
 CURSOR='Bibata-Modern-Ice'
 
 SCHEMA='gsettings set org.gnome.desktop.interface'

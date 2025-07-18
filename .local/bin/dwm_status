@@ -1,0 +1,5 @@
+#!/usr/bin/dash
+while true; do
+  dwm -s "$($HOME/.local/bin/dwm-status/resources.sh)"
+    sleep 1
+done
