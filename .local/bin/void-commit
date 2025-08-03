@@ -25,6 +25,8 @@ sync_upstream() {
     git fetch upstream
     git reset --hard upstream/master
     git clean -fd
+    git push origin master --force   # <== Penting agar GitHub tidak behind
+
     echo "✅ master disamakan dengan upstream/master"
 }
 
@@ -32,12 +34,10 @@ commit_changes() {
     echo "🔀 Checkout ke branch repo-sendiri..."
     git checkout repo-sendiri
 
-    # Auto commit jika ada perubahan di srcpkgs
     if git status --porcelain | grep -q '^ M srcpkgs/'; then
         echo "📦 Perubahan srcpkgs/ terdeteksi → auto commit"
         git add srcpkgs/
 
-        # Coba ambil nama direktori paket sebagai pesan commit
         COMMIT_MSG=$(basename "$(find srcpkgs -mindepth 2 -maxdepth 2 -type f -name template -newermt '1 minute ago' | head -n1 | xargs dirname 2>/dev/null)")
         [[ -z "$COMMIT_MSG" ]] && COMMIT_MSG="update template"
         git commit -m "$COMMIT_MSG"
