@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+USE_WAYLAND=${USE_WAYLAND:-0}
+
+profile="${1:-}"
+if [[ -z "$profile" ]]; then
+  echo "Pakai: tg <nama-profil> (mis. tg akun01)"; exit 1
+fi
+
+workdir="$HOME/TelegramProfiles/$profile"
+mkdir -p "$workdir"
+
+# Deteksi runner: native > flatpak
+if command -v telegram-desktop >/dev/null 2>&1; then
+  runner=(telegram-desktop)
+elif command -v flatpak >/dev/null 2>&1 && flatpak info org.telegram.desktop >/dev/null 2>&1; then
+  runner=(flatpak run org.telegram.desktop)
+else
+  echo "Telegram Desktop tidak ditemukan (native/flatpak). Install dulu."; exit 2
+fi
+
+# Wayland opsional
+if [[ "$USE_WAYLAND" == "1" ]]; then
+  export QT_QPA_PLATFORM=wayland
+fi
+
+exec "${runner[@]}" -many -workdir "$workdir"

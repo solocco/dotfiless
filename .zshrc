@@ -112,23 +112,42 @@ export FZF_DEFAULT_OPTS="
 export TERMINAL='st'
 export EDITOR='neovim'
 export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/bin:$PATH"
 
 #alias
 alias v='nvim'
 alias rel="xrdb merge /home/cid/xresources && kill -USR1 $(pidof st)"
 alias q='xbps-query -Rs'
-alias u='sudo xbps-install -Su'
-alias i='sudo xbps-install -S'
-alias c='sudo xbps-remove -o && sudo xbps-remove -O'
-alias d='sudo xbps-remove'
+alias u='doas xbps-install -Su'
+alias i='doas xbps-install -S'
+alias c='doas xbps-remove -o && sudo xbps-remove -O'
+alias d='doas xbps-remove'
 alias ls='lsd --color=auto'
 alias lh='lsd -hl'
 alias s='source ~/.zshrc'
 alias cat='bat --style=plain --theme=GitHub'
-alias p='sudo poweroff'
-alias r='sudo reboot'
-alias mi='sudo make install'
+alias p='doas poweroff'
+alias r='doas reboot'
+alias mi='doas make install'
 alias mc='make clean'
 alias l='lsd -al'
 alias ll='lsd -a'
 alias lb='lsblk'
+alias sudo='doas'
+
+#alias doas="$HOME/.local/bin/askdoas"
+_x_install() {
+    local cur=${COMP_WORDS[COMP_CWORD]}
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    if [[ "$prev" == "-f" ]]; then
+        options=$(xbps-query -Rs "$cur" 2>/dev/null | awk '{print $2}'  | sed -E 's/-[0-9].*$//' | sort -u)
+    else
+        options=$(xbps-query -Rs "$cur" 2>/dev/null | awk '{print $2}' | sed -E 's/-[0-9].*$//' | sort -u)
+    fi
+    COMPREPLY=( $(compgen -W "$options" -- "$cur") )
+}
+
+complete -F _x_install gxquery
+
+export TELEGRAM_TOKEN=7360181319:AAGPksJGyy3rDzmW2IMtU8squKMXrnqHLdY
+export TELEGRAM_CHAT_ID=1717410487

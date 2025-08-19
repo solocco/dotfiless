@@ -1,0 +1,17 @@
+# wlsunset
+wlsunset -T 6500 -t 5500 -l -6.2 -L 106.8 -d 3 &
+
+# Set background
+wallpaper &
+
+# Launch a panel such as yambar or waybar.
+launch-waybar.sh &
+
+# Enable notifications. Typically GNOME/KDE application notifications go
+notif &
+
+## User Friendly Network Menu
+nm-applet --indicator &
+
+## User Friendly Bluetooth Menu
+blueman-applet &

@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# Greedtd uses this file to start maomao
+export MOZ_ENABLE_WAYLAND=1
+export QT_QPA_PLATFORM=wayland
+export ELECTRON_OZONE_PLATFORM_HINT=wayland
+export BEMENU_BACKEND=wayland
+export XCURSOR_THEME=Bibata-Modern-Ice
+export XDG_SESSION_TYPE=wayland
+export XDG_CURRENT_DESKTOP=labwc
+export XDG_SESSION_DESKTOP=labwc
+
+exec labwc >~/.local/state/labwc.log 2>&1

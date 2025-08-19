@@ -13,6 +13,8 @@ elif pgrep -x river >/dev/null; then
   CURRENT_WM="river"
 elif pgrep -x maomao >/dev/null; then
   CURRENT_WM="maomao"
+elif pgrep -x labwc >/dev/null; then
+  CURRENT_WM="labwc"
 else
   CURRENT_WM="sway"
 fi

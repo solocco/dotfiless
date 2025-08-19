@@ -1,0 +1,107 @@
+{
+  "name": "top",
+  "layer": "overlay",
+  "position": "bottom",
+  "mode": "",
+  "margin-top": 5,
+  "margin-left": 5,
+  "margin-right": 5,
+  "height": 30,
+  "spacing": 10,
+  "modules-left": ["wlr/taskbar"],
+  "modules-right": [
+    "custom/temp",
+    "backlight",
+    "pulseaudio",
+    "battery",
+    "memory",
+    "cpu",
+    "clock",
+    "tray",
+  ],
+
+  "tray": {
+    "icon-size": 16,
+    "spacing": 5,
+  },
+
+  "clock": {
+    "format": "{:%H:%M %Z}",
+    "format-alt": "{:%A, %B %d, %Y (%R)}  ",
+  },
+
+  "cpu": {
+    "format": "{usage}% 󰍛",
+  },
+
+  "memory": {
+    "format": "{used:0.1f}G 󰔚",
+  },
+
+  "battery": {
+    "states": {
+      "good": 95,
+      "warning": 30,
+      "critical": 20,
+    },
+    "format": "{capacity}% {icon}",
+    "format-charging": "{capacity}% ",
+    "format-plugged": "{capacity}% ",
+    "format-alt": "{time} {icon}",
+    "format-icons": ["", "", "", "", ""],
+  },
+
+  "pulseaudio": {
+    "format": "{volume}% {icon}",
+    "format-icons": ["", ""],
+    "format-muted": "Muted 󰖁",
+    "max-volume": 100,
+    "scroll-step": 0.1,
+    "on-click": "pamixer --toggle-mute",
+  },
+
+  "backlight": {
+    "device": "intel_backlight",
+    "format": "{percent}% ",
+  },
+
+  "river/tags": {
+    "num-tags": 5,
+    "disable-click": true,
+  },
+
+  "niri/window": {
+  "format": "> {}",
+  "max-length": 80
+},
+
+  "custom/temp": {
+  "exec": "~/.config/niri/scripts/get-temp.sh",
+  "interval": 5,
+  "format": "{} ",
+  "return-type": "text"
+},
+
+  "custom/window": {
+  "exec": "~/.config/niri/scripts/get-active-window.sh",
+  "interval": 1,
+  "format": "{}",
+  "return-type": "text"
+},
+
+
+  "temperature": {
+  "hwmon-path": "/sys/class/hwmon/hwmon10/temp1_input",
+  "critical-threshold": 80,
+  "format-critical": "{temperatureC}°C ",
+  "format": "{temperatureC}°C "
+},
+
+"wlr/taskbar": {
+      "format": "{icon} {name}",
+      "icon-size": 16,
+      "tooltip": false,
+      "on-click": "minimize-raise",
+      "on-click-right": "close",
+      }
+}

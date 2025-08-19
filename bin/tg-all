@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+for i in $(seq -w 1 20); do
+  nohup "$HOME/bin/tg" "akun$i" >/dev/null 2>&1 &
+  sleep 0.2   # jeda kecil biar CPU/IO gak meledak
+done
+echo "Semua akun (akun01..akun20) sedang dibuka di background."

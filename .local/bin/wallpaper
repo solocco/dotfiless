@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-swaybg -i ~/.config/sway/chaos.png -m fill
+swaybg -i ~/.config/walls/gruvbox_1.jpg -m fill
